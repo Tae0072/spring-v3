@@ -35,15 +35,44 @@ public class BoardNativeRepositoryTest {
     }
 
     @Test
-    public void svae_test() {
+    public void save_test() {
+        // given
+        String title = "1";
+        String content = "1";
+        // when
+        int insert = boardNativeRepository.save(title, content);
+        // eye
+
     }
 
     @Test
     public void deleteById_test() {
+        // given
+        int id = 1;
+        // when
+        int result = boardNativeRepository.deleteById(id);
+        // eye
+        // System.out.println("result : " + result);
+        List<Board> list = boardNativeRepository.findAll();
+        for (Board board : list) {
+            System.out.println(board);
+        }
     }
 
     @Test
     public void updateById_test() {
+        // given
+        int id = 1;
+        String titel = "title";
+        String content = "content";
+        // when
+        int result = boardNativeRepository.updateById(id, "title", "content");
+        // eye
+        // System.out.println("result : " + result);
+        List<Board> list = boardNativeRepository.findAll();
+        for (Board board : list) {
+            System.out.println(board);
+        }
     }
 
 }

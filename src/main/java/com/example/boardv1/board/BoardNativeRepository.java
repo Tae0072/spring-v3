@@ -27,26 +27,30 @@ public class BoardNativeRepository {
         return list;
     }
 
-    public void save(String title, String content) {
+    // f(x) = x + 1
+
+    public int save(String title, String content) {
         Query query = em
                 .createNativeQuery("insert into board_tb(title, content, created_at) values(:title, :content, now())");
         query.setParameter("content", content);
         query.setParameter("title", title);
-        query.executeUpdate();
-
+        int result = query.executeUpdate();
+        return result;
     }
 
-    public void deleteById(int id) {
+    public int deleteById(int id) {
         Query query = em.createNativeQuery("delete from board_tb where id = :id");
         query.setParameter("id", id);
-        query.executeUpdate();
+        int result = query.executeUpdate();
+        return result;
     }
 
-    public void updateById(int id, String title, String content) {
+    public int updateById(int id, String title, String content) {
         Query query = em.createNativeQuery("update board_tb set title = :title, content = :content where id = :id");
         query.setParameter("id", id);
         query.setParameter("title", title);
         query.setParameter("content", content);
-        query.executeUpdate();
+        int result = query.executeUpdate();
+        return result;
     }
 }
