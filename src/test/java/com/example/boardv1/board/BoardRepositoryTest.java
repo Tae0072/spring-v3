@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import jakarta.persistence.EntityManager;
 
 @Import(BoardRepository.class)
-@DataJpaTest
+@DataJpaTest // EntityManger가 ioc에 등록됨
 public class BoardRepositoryTest {
 
     @Autowired // 어노테이션 DI 기법
@@ -25,12 +25,14 @@ public class BoardRepositoryTest {
         Board board = new Board();
         board.setTitle("title7");
         board.setContent("content7");
-        System.out.println("==before persist");
+        System.out.println("===before persist");
         System.out.println(board);
+
         // when
         boardRepository.save(board);
-        // eye (board 객체가 DB데이터와 동기화 되었음.)
-        System.out.println("==after persist");
+
+        // eye (board객체가 DB데이터와 동기화 되었음.)
+        System.out.println("===after persist");
         System.out.println(board);
     }
 
@@ -38,25 +40,14 @@ public class BoardRepositoryTest {
     public void findById_test() {
         // given
         int id = 1;
+
         // when
-        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 유저가 없어"));
-        // boardRepository.findById(2);
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
+        // boardRepository.findById(1);
 
         // eye
         System.out.println(board);
-    }
-
-    @Test
-    public void findByIdV2_test() {
-        // given
-        int id = 1;
-        // when
-        boardRepository.findById(id);
-        em.clear();
-        boardRepository.findById(id);
-
-        // eye
-
     }
 
     @Test
@@ -65,53 +56,69 @@ public class BoardRepositoryTest {
 
         // when
         List<Board> list = boardRepository.findAll();
-        // boardRepository.findById(2);
 
         // eye
         for (Board board : list) {
             System.out.println(board);
         }
-
     }
-
-    // @Test
-    // public void findAllV2_test() {
-    // // given
-
-    // // when
-    // boardRepository.findAllV2();
-
-    // // eye
-
-    // }
 
     @Test
     public void delete_test() {
         // given
-        Board board = boardRepository.findById(1).orElseThrow(() -> new RuntimeException("삭제 할게 없다."));
+        int id = 1;
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
 
         // when
         boardRepository.delete(board);
 
         // eye
         em.flush();
-
     }
 
     @Test
     public void update_test() {
         // given
-        Board board = boardRepository.findById(1).orElseThrow(() -> new RuntimeException("업데이트가 없다."));
+        int id = 1;
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요요"));
 
         // when
-        board.setTitle("title-update");
+        board.setTitle("title1-update");
 
         // eye
         em.flush();
 
         List<Board> list = boardRepository.findAll();
-        for (Board bb : list) {
-            System.out.println(bb);
+
+        // eye
+        for (Board b : list) {
+            System.out.println(b);
         }
     }
+
+    @Test
+    public void findByIdV2_test() {
+        // given
+        int id = 1;
+
+        // when
+        boardRepository.findById(id);
+        em.clear();
+        boardRepository.findById(id);
+    }
+
+    @Test
+    public void orm_test() {
+        int id = 1;
+
+        Board board = boardRepository.findById(id).get();
+        System.out.println("board->user->id : " + board.getUser().getId());
+        System.out
+                .println("==========================================================================================");
+        System.out.println("board->user->id : " + board.getUser().getUsername());
+
+    }
+
 }
