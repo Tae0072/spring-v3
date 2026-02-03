@@ -39,7 +39,7 @@ public class BoardRepositoryTest {
         // given
         int id = 1;
         // when
-        Board board = boardRepository.findById(id);
+        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 유저가 없어"));
         // boardRepository.findById(2);
 
         // eye
@@ -74,21 +74,21 @@ public class BoardRepositoryTest {
 
     }
 
-    @Test
-    public void findAllV2_test() {
-        // given
+    // @Test
+    // public void findAllV2_test() {
+    // // given
 
-        // when
-        boardRepository.findAllV2();
+    // // when
+    // boardRepository.findAllV2();
 
-        // eye
+    // // eye
 
-    }
+    // }
 
     @Test
     public void delete_test() {
         // given
-        Board board = boardRepository.findById(1);
+        Board board = boardRepository.findById(1).orElseThrow(() -> new RuntimeException("삭제 할게 없다."));
 
         // when
         boardRepository.delete(board);
@@ -101,7 +101,7 @@ public class BoardRepositoryTest {
     @Test
     public void update_test() {
         // given
-        Board board = boardRepository.findById(1);
+        Board board = boardRepository.findById(1).orElseThrow(() -> new RuntimeException("업데이트가 없다."));
 
         // when
         board.setTitle("title-update");

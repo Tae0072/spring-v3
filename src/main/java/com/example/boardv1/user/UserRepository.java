@@ -1,6 +1,7 @@
 package com.example.boardv1.user;
 
 import java.lang.foreign.Linker.Option;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -22,20 +23,16 @@ public class UserRepository {
     }
 
     // 로그인할때 username으로 조회해서 password 검증
-    public User findByUsername(String username) {
-        Query query = em.createQuery("select u from User u where u.username = :username", User.class);
-        query.setParameter("username", username);
-        try {
-            User findUser = (User) query.getSingleResult();
-            return findUser;
-        } catch (Exception e) {
-            return null;
-        }
-
+    public Optional<User> findByUsername(String username) {
+        return em.createQuery("select u from User u where u.username = :username", User.class)
+                .setParameter("username", username)
+                .getResultStream()
+                .findFirst();
     }
 
-    public void findById(int id) {
-        User user = em.find(User.class, id);
+    public Optional<User> findById(int id) {
+        User findUser = em.find(User.class, id);
+        return Optional.ofNullable(findUser);
 
     }
 }
