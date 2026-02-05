@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.boardv1.reply.Reply;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -58,4 +61,8 @@ public class BoardRepository {
         em.remove(board);
     }
 
+    public Reply replySave(Reply reply) {
+        em.persist(reply);
+        return reply;
+    }
 }

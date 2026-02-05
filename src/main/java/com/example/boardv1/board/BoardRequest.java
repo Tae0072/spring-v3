@@ -9,6 +9,11 @@ public class BoardRequest {
     public static class SaveOrUpdateDTO {
         private String title;
         private String content;
+    }
 
+    @Data
+    public static class ReplySaveDTO {
+        private int boardId;
+        private String comment;
     }
 }

@@ -7,18 +7,18 @@ public class ReplyResponse {
     @Data
     public static class DTO {
         private Integer id;
-        private String coment;
+        private String comment;
         private Integer replyUserId;
         private String replyUsername;
         private boolean isreplyOwner; // 로그인한 유저가 댓글을 작성한 유저인지.
 
         public DTO(Reply reply, Integer sessionUserId) {
             this.id = reply.getId();
-            this.coment = reply.getComment();
+            this.comment = reply.getComment();
             this.replyUserId = reply.getUser().getId();
             this.replyUsername = reply.getUser().getUsername();
             this.isreplyOwner = reply.getUser().getId() == sessionUserId;
         }
-
     }
+
 }

@@ -99,4 +99,15 @@ public class BoardControler {
         BoardResponse.DetailDTO dto = boardService.상세보기(id, sessionUserId);
         return dto;
     }
+
+    @PostMapping("/replies/save")
+    public String replySave(BoardRequest.ReplySaveDTO replySaveDTO) throws IOException {
+        // 인증(o),권한(x)
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null)
+            throw new RuntimeException("인증되지 않았습니다요.");
+
+        boardService.댓글쓰기(replySaveDTO.getBoardId(), replySaveDTO.getComment(), sessionUser);
+        return "redirect:/boards/" + replySaveDTO.getBoardId();
+    }
 }

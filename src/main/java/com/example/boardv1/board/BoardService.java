@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.boardv1.reply.Reply;
 import com.example.boardv1.user.User;
 
 import lombok.RequiredArgsConstructor;
@@ -78,5 +79,23 @@ public class BoardService {
 
         return board;
         // 자동 flush
+    }
+
+    @Transactional
+    public void 댓글쓰기(int id, String commet, User sessionUser) { // 아이디는 자동 생성
+        // 1. 비영속 객체
+        Reply reply = new Reply();
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
+        reply.setComment(commet);
+        reply.setBoard(board);
+        reply.setUser(sessionUser);
+
+        System.out.println("before persist " + reply.getId());
+
+        // 2. persist
+        boardRepository.replySave(reply);
+
+        System.out.println("after persist " + reply.getId());
     }
 }
