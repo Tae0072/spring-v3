@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 데이터 베이스 세상의 테이블을 자바 세상에 모델린한 결과 = 엔티티
+ * 데이터 베이스 세상의 테이블을 자바 세상에 모델린한 결과 = 엔티티.
  */
 
 @NoArgsConstructor // 디폴트 생성자

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.boardv1.user.User;
 
@@ -27,7 +28,7 @@ public class BoardControler {
         // 인증(o),권한(x)
         User sessionUser = (User) session.getAttribute("sessionUser");
         if (sessionUser == null)
-            throw new RuntimeException("인증되지 않았습니다.");
+            throw new RuntimeException("인증되지 않았습니다요.");
         boardService.게시글쓰기(reqDTO.getTitle(), reqDTO.getContent(), sessionUser);
         return "redirect:/";
     }
@@ -89,5 +90,13 @@ public class BoardControler {
 
         boardService.게시글삭제(id, sessionUser.getId());
         return "redirect:/";
+    }
+
+    @GetMapping("/api/boards/{id}")
+    public @ResponseBody BoardResponse.DetailDTO apiDetail(@PathVariable("id") int id) {
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        Integer sessionUserId = sessionUser == null ? null : sessionUser.getId();
+        BoardResponse.DetailDTO dto = boardService.상세보기(id, sessionUserId);
+        return dto;
     }
 }
