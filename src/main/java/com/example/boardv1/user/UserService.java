@@ -2,8 +2,6 @@ package com.example.boardv1.user;
 
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

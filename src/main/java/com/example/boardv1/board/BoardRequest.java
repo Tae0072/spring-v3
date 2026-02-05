@@ -1,7 +1,5 @@
 package com.example.boardv1.board;
 
-import com.example.boardv1.user.User;
-
 import lombok.Data;
 
 public class BoardRequest {

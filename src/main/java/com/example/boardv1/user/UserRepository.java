@@ -1,12 +1,10 @@
 package com.example.boardv1.user;
 
-import java.lang.foreign.Linker.Option;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -23,7 +23,7 @@ public class ReplyController {
 
     @PostMapping("/replies/{id}/delete")
     public String delete(@PathVariable("id") int id, @RequestParam("boardId") int boardId) {
-
+        // 인증(o),권한(o)
         User sessionUser = (User) session.getAttribute("sessionUser");
         if (sessionUser == null)
 
@@ -38,7 +38,6 @@ public class ReplyController {
         // 인증(o),권한(x)
         User sessionUser = (User) session.getAttribute("sessionUser");
         if (sessionUser == null)
-
             throw new RuntimeException("인증되지 않았습니다요.");
 
         replyService.댓글쓰기(replySaveDTO.getBoardId(), replySaveDTO.getComment(), sessionUser);

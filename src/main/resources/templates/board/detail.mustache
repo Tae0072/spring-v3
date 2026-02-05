@@ -67,8 +67,9 @@
         </div>
     </div>
 </div>
-{{^sessionUser}}
+
 <script>
+{{^sessionUser}}
     // 1. textarea DOM 선택
     const textarea = document.querySelector("textarea[name='comment']");
 
@@ -77,8 +78,21 @@
         alert("로그인하세요");
         location.href = "/login-form"
     });
+    {{/sessionUser}}
+    // 댓글 form 선택
+    const replyForm = document.querySelector("form[action='/replies/save']");
+    const textarea = replyForm.querySelector("textarea[name='comment']");
+
+    replyForm.addEventListener("submit", function (e) {
+        // 공백 제거 후 체크
+        if (textarea.value.trim() === "") {
+            e.preventDefault(); // form 제출 막기
+            alert("댓글 내용을 입력하세요");
+            textarea.focus();
+        }
+    });
 </script>
-{{/sessionUser}}
+
 
 </body>
 
