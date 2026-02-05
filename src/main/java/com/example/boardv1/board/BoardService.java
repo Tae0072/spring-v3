@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.boardv1.reply.Reply;
 import com.example.boardv1.user.User;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 // 책임 : 트랜젝션 관리, DTO만들기(일관성을 만들기 위해), 권한체크(DB정보가 필요하니까)
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final EntityManager em;
 
     public List<Board> 게시글목록() {
         return boardRepository.findAll();
@@ -87,6 +89,9 @@ public class BoardService {
         Reply reply = new Reply();
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
+
+        // User mockUser = em.getReference(User.class, sessionUser); // join 터지기 싫을 때
+        // 사용.
         reply.setComment(commet);
         reply.setBoard(board);
         reply.setUser(sessionUser);

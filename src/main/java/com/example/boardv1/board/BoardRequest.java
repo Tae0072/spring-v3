@@ -1,5 +1,7 @@
 package com.example.boardv1.board;
 
+import com.example.boardv1.user.User;
+
 import lombok.Data;
 
 public class BoardRequest {
@@ -11,9 +13,4 @@ public class BoardRequest {
         private String content;
     }
 
-    @Data
-    public static class ReplySaveDTO {
-        private int boardId;
-        private String comment;
-    }
 }

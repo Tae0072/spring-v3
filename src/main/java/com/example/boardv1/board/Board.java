@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
@@ -43,6 +44,7 @@ public class Board { // user 1, board n
     private User user;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER)
+    @OrderBy("id DESC")
     private List<Reply> replies = new ArrayList<>();
 
     @CreationTimestamp
