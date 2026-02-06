@@ -19,7 +19,7 @@
             작성자 : {{model.username}}
         </div>
         <div class="m-4 p-2">  
-            {{model.content}}
+            {{&model.content}}
             
         </div>
     </div>
@@ -30,22 +30,22 @@
     
         <!-- 댓글등록 -->
         <div class="card-body">
-            <form action="/replies/save" method="post">
-                <input type="hidden" name="boardId"  value="{{model.id}}">
-                <textarea class="form-control" rows="2" name="comment"></textarea>
-                <div class="d-flex justify-content-end">
-                    <button class="btn btn-secondary mt-1">
-                        댓글등록
-                    </button>
-                </div>
+            <form> 
+                <input type="hidden" id="boardId" value="{{model.id}}">
+                <textarea class="form-control" rows="2" id="replyComment"></textarea>
+                    <div class="d-flex justify-content-end">
+                         <button type="button" class="btn btn-secondary mt-1" onclick="saveReply()">
+                             댓글등록
+                         </button>
+                    </div>
             </form>
         </div>
 
         <!-- 댓글목록 -->
-        <div class="card-footer">
+       <div class="card-footer">
             <b>댓글리스트</b>
         </div>
-        <div class="list-group">
+        <div class="list-group" id="reply-box"> 
 
         {{#model.replies}}
         <!-- 댓글아이템 -->
@@ -68,31 +68,53 @@
     </div>
 </div>
 
+
 <script>
-{{^sessionUser}}
-    // 1. textarea DOM 선택
-    const textarea = document.querySelector("textarea[name='comment']");
+    async function saveReply() {
+        // 1. 값 가져오기
+        let requestBody = {
+            boardId: document.querySelector("#boardId").value,
+            comment: document.querySelector("#replyComment").value
+        };
 
-    // 2. 클릭 이벤트 리스너 등록
-    textarea.addEventListener("click", function () {
-        alert("로그인하세요");
-        location.href = "/login-form"
-    });
-    {{/sessionUser}}
-    // 댓글 form 선택
-    const replyForm = document.querySelector("form[action='/replies/save']");
-    const textarea = replyForm.querySelector("textarea[name='comment']");
+        // 2. 서버 전송
+        let response = await fetch("/api/replies/save", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(requestBody)
+        });
 
-    replyForm.addEventListener("submit", function (e) {
-        // 공백 제거 후 체크
-        if (textarea.value.trim() === "") {
-            e.preventDefault(); // form 제출 막기
-            alert("댓글 내용을 입력하세요");
-            textarea.focus();
+        // 3. 결과 처리
+        if (response.status === 201) { // 성공
+            let replyDTO = await response.json();
+            
+            let replyHtml = `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex">
+                        <div class="px-1 me-1 bg-secondary text-white rounded">${replyDTO.replyUsername}</div>
+                        <div>${replyDTO.comment}</div>
+                    </div>
+                    <form action="/replies/${replyDTO.id}/delete?boardId=${requestBody.boardId}" method="post">
+                        <button class="btn">🗑</button>
+                    </form>
+                </div>
+            `;
+
+            document.querySelector("#reply-box").insertAdjacentHTML("afterbegin", replyHtml);
+            document.querySelector("#replyComment").value = "";
+
+        } else if (response.status === 401) { // 인증 실패
+            alert("로그인이 필요합니다.");
+            location.href = "/login-form";
+            
+        } else {
+            // [중요] 정확한 에러 확인을 위해 상태 코드를 띄웁니다.
+            alert("오류 발생: " + response.status); 
         }
-    });
+    }
 </script>
-
 
 </body>
 

@@ -24,6 +24,7 @@ public class BoardService {
     }
 
     public BoardResponse.DetailDTO 상세보기(int id, Integer sessionUserId) {
+
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
 

@@ -1,7 +1,21 @@
 {{> header}}
 
-<div class="container p-5">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
+<style>
+    /* 팝업창이 모달 뒤로 숨는 문제 해결 */
+    .note-modal-backdrop {
+        z-index: 1040 !important;
+    }
+    .note-modal-content {
+        margin: 20px auto;
+        z-index: 1050 !important;
+    }
+</style>
+
+<div class="container p-5">
     <div class="card">
         <div class="card-header"><b>게시글 작성</b></div>
         <div class="card-body">
@@ -10,13 +24,63 @@
                     <input type="text" class="form-control" placeholder="Enter title" name="title">
                 </div>
                 <div class="mb-3">
-                    <textarea class="form-control" rows="5" name="content"></textarea>
+                    <textarea class="form-control" rows="5" name="content" id="summernote"></textarea>
                 </div>
                 <button class="btn btn-secondary form-control">글쓰기</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    $('#summernote').summernote({
+        placeholder: '내용을 입력해주세요',
+        tabsize: 2,
+        height: 300,
+        dialogsInBody: true, // 팝업 충돌 방지
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        callbacks: {
+            onPaste: function (e) {
+                // 1. 클립보드 데이터 가져오기
+                var clipboardData = (e.originalEvent || e).clipboardData || window.clipboardData;
+                var bufferText = clipboardData.getData('Text');
+
+                // 2. 유튜브 주소 감지 (정규표현식) - 공유주소, 일반주소 모두 대응
+                var match = bufferText.match(/(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|v\/|embed\/))([a-zA-Z0-9_-]{11})(?:\S+)?/);
+
+                if (match && match[1]) {
+                    e.preventDefault(); // 기본 붙여넣기 막음
+
+                    var videoId = match[1]; // 영상 ID 추출
+
+                    // 3. HTML 생성 (링크 + 반응형 비디오)
+                    // - 첫 줄: 링크 생성 (<a href...>)
+                    // - 두번째 줄: 반응형 div (padding-bottom: 56.25%는 16:9 비율을 의미)
+                    var responsiveHtml = `
+                        <p><a href="${bufferText}" target="_blank">${bufferText}</a></p>
+                        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+                            <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                frameborder="0" allowfullscreen>
+                            </iframe>
+                        </div>
+                        <br>`;
+
+                    // 4. 에디터에 HTML 삽입
+                    $('#summernote').summernote('pasteHTML', responsiveHtml);
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>

@@ -13,15 +13,13 @@
     </thead>
     <tbody>
       {{#models}}
-      <tr>
+      <tr onclick="location.href='/boards/{{id}}'" style="cursor: pointer;">
         <td>{{id}}</td>
         <td>
-          <a href="/boards/{{id}}" style="color: inherit; text-decoration: none;">
-            {{title}}
-          </a>
+           {{title}}
         </td>
         <td>
-        {{content}}
+        {{summary}}
         </td>
         <td>
         {{user.username}}

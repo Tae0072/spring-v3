@@ -19,7 +19,7 @@ public class ReplyService {
     private final EntityManager em;
 
     @Transactional
-    public void 댓글쓰기(int id, String commet, User sessionUser) { // 아이디는 자동 생성
+    public Reply 댓글쓰기(int id, String commet, User sessionUser) { // 아이디는 자동 생성
         // 1. 비영속 객체
         Reply reply = new Reply();
         Board board = boardRepository.findById(id)
@@ -37,6 +37,7 @@ public class ReplyService {
         boardRepository.replySave(reply);
 
         System.out.println("after persist " + reply.getId());
+        return reply;
     }
 
     @Transactional
