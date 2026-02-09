@@ -29,7 +29,10 @@ public class BoardControler {
     // body : title=title7&content=content7 (x-www-form)
     @PostMapping("/boards/save")
     public String save(@Valid BoardRequest.SaveOrUpdateDTO reqDTO, Errors errors) {
-
+        // 유효성 검사 실패시
+        if (errors.hasErrors()) {
+            throw new Exception400(errors.getAllErrors().get(0).getDefaultMessage());
+        }
         // 인증(o),권한(x)
         User sessionUser = (User) session.getAttribute("sessionUser");
         if (sessionUser == null)
@@ -41,7 +44,10 @@ public class BoardControler {
 
     @PostMapping("/boards/{id}/update")
     public String update(@PathVariable("id") int id, @Valid BoardRequest.SaveOrUpdateDTO reqDto, Errors errors) {
-
+        // 유효성 검사 실패시
+        if (errors.hasErrors()) {
+            throw new Exception400(errors.getAllErrors().get(0).getDefaultMessage());
+        }
         // 인증(o),권한(o)
         User sessionUser = (User) session.getAttribute("sessionUser");
         if (sessionUser == null)
@@ -101,7 +107,10 @@ public class BoardControler {
 
     @GetMapping("/api/boards/{id}")
     public @ResponseBody @Valid BoardResponse.DetailDTO apiDetail(@PathVariable("id") int id, Errors errors) {
-
+        // 유효성 검사 실패시
+        if (errors.hasErrors()) {
+            throw new Exception400(errors.getAllErrors().get(0).getDefaultMessage());
+        }
         User sessionUser = (User) session.getAttribute("sessionUser");
         Integer sessionUserId = sessionUser == null ? null : sessionUser.getId();
         BoardResponse.DetailDTO dto = boardService.상세보기(id, sessionUserId);
