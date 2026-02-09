@@ -70,48 +70,67 @@
 
 
 <script>
+    // [댓글 등록]
     async function saveReply() {
-        // 1. 값 가져오기
         let requestBody = {
             boardId: document.querySelector("#boardId").value,
             comment: document.querySelector("#replyComment").value
         };
 
-        // 2. 서버 전송
         let response = await fetch("/api/replies/save", {
             method: "post",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
+            headers: { "Content-Type": "application/json; charset=utf-8" },
             body: JSON.stringify(requestBody)
         });
 
-        // 3. 결과 처리
         if (response.status === 201) { // 성공
             let replyDTO = await response.json();
-            
             let replyHtml = `
-                <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div id="reply-${replyDTO.id}" class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="d-flex">
                         <div class="px-1 me-1 bg-secondary text-white rounded">${replyDTO.replyUsername}</div>
                         <div>${replyDTO.comment}</div>
                     </div>
-                    <form action="/replies/${replyDTO.id}/delete?boardId=${requestBody.boardId}" method="post">
-                        <button class="btn">🗑</button>
-                    </form>
-                </div>
-            `;
-
+                    <button onclick="deleteReply(${replyDTO.id})" class="btn">🗑</button>
+                </div>`;
             document.querySelector("#reply-box").insertAdjacentHTML("afterbegin", replyHtml);
             document.querySelector("#replyComment").value = "";
 
-        } else if (response.status === 401) { // 인증 실패
+        } else if (response.status === 400) { // 유효성 검사 실패 (공백 등)
+            let msg = await response.text();
+            alert(msg); 
+        } else if (response.status === 401) { // 로그인 안됨
             alert("로그인이 필요합니다.");
             location.href = "/login-form";
-            
+        } else if (response.status === 404) { // 게시글 없음
+            let msg = await response.text();
+            alert(msg);
         } else {
-            // [중요] 정확한 에러 확인을 위해 상태 코드를 띄웁니다.
-            alert("오류 발생: " + response.status); 
+            alert("오류 발생: " + response.status);
+        }
+    }
+
+    // [댓글 삭제]
+    async function deleteReply(replyId) {
+        let response = await fetch(`/api/replies/${replyId}/delete`, {
+            method: "post"
+        });
+
+        if (response.status === 200) { // 성공
+            // 화면에서 바로 제거
+            let element = document.querySelector(`#reply-${replyId}`);
+            if (element) element.remove();
+
+        } else if (response.status === 401) {
+            alert("로그인이 필요합니다.");
+            location.href = "/login-form";
+        } else if (response.status === 403) {
+            let msg = await response.text();
+            alert(msg); // "작성자만 삭제할 수 있습니다" 등
+        } else if (response.status === 404) {
+            alert("이미 삭제된 댓글이거나 존재하지 않습니다.");
+        } else {
+            alert("삭제 실패: " + response.status);
         }
     }
 </script>

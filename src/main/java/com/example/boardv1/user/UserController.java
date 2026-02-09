@@ -1,13 +1,16 @@
 package com.example.boardv1.user;
 
-
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -32,11 +35,11 @@ public class UserController {
         session.invalidate();
         return "redirect:/";
     }
-    
 
     // 조회인데, 예외로 post 요청
     @PostMapping("/login")
-    public String login(UserRequest.LoginDTO reqDTO, HttpServletResponse resp) {
+    public String login(@Valid UserRequest.LoginDTO reqDTO, Errors errors, HttpServletResponse resp) {
+
         // HttpSession session = req.getSession();
         User sessionUser = userService.로그인(reqDTO.getUsername(), reqDTO.getPassword());
         session.setAttribute("sessionUser", sessionUser);
@@ -48,14 +51,20 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(UserRequest.JoinDTO reqDTO) {
+    public String join(@Valid UserRequest.JoinDTO reqDTO, Errors errors) {
+
         userService.회원가입(reqDTO.getUsername(), reqDTO.getPassword(), reqDTO.getEmail());
 
         return "redirect:/login-form";
     }
 
     @GetMapping("/login-form")
-    public String loginForm() {
+    public String loginForm(
+            // 파라미터가 없으면 기본값으로 메인('/') 설정
+            @RequestParam(value = "redirect", defaultValue = "/") String redirect,
+            Model model) {
+
+        model.addAttribute("redirect", redirect); // 뷰에 전달
         return "user/login-form";
     }
 
